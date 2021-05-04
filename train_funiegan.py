@@ -19,11 +19,15 @@ from torchvision.utils import save_image
 from torch.utils.data import DataLoader
 from torch.autograd import Variable
 import torchvision.transforms as transforms
+
+import sys
+sys.path.append('/content/ROV_GAN')
+
 # local libs
 from nets.commons import Weights_Normal, VGG19_PercepLoss
 from nets.funiegan import GeneratorFunieGAN, DiscriminatorFunieGAN
 from utils.data_utils import GetTrainingPairs, GetValImage
-
+'''
 ## get configs and training options
 parser = argparse.ArgumentParser()
 parser.add_argument("--cfg_file", type=str, default="/content/ROV_GAN/configs/train_euvp.yaml")
@@ -35,14 +39,15 @@ parser.add_argument("--lr", type=float, default=0.0003, help="adam: learning rat
 parser.add_argument("--b1", type=float, default=0.5, help="adam: decay of 1st order momentum")
 parser.add_argument("--b2", type=float, default=0.99, help="adam: decay of 2nd order momentum")
 args = parser.parse_args()
-
+'''
 ## training params
-epoch = args.epoch
-num_epochs = args.num_epochs
-batch_size =  args.batch_size
-lr_rate, lr_b1, lr_b2 = args.lr, args.b1, args.b2 
+epoch = 0
+num_epochs = 20
+batch_size =  8
+lr_rate, lr_b1, lr_b2 = 0.0003, 0.5, 0.99
+cfg_file =  "/content/ROV_GAN/configs/train_euvp.yaml"
 # load the data config file
-with open(args.cfg_file) as f:
+with open(cfg_file) as f:
     cfg = yaml.load(f, Loader=yaml.FullLoader)
 # get info from config file
 dataset_name = cfg["dataset_name"] 
@@ -85,7 +90,7 @@ else:
     Tensor = torch.FloatTensor
 
 # Initialize weights or load pretrained models
-if args.epoch == 0:
+if epoch == 0:
     generator.apply(Weights_Normal)
     discriminator.apply(Weights_Normal)
 else:
@@ -175,5 +180,3 @@ for epoch in range(epoch, num_epochs):
     if (epoch % ckpt_interval == 0):
         torch.save(generator.state_dict(), "checkpoints/FunieGAN/%s/generator_%d.pth" % (dataset_name, epoch))
         torch.save(discriminator.state_dict(), "checkpoints/FunieGAN/%s/discriminator_%d.pth" % (dataset_name, epoch))
-
-
