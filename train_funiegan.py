@@ -42,7 +42,7 @@ args = parser.parse_args()
 '''
 ## training params
 epoch = 0
-num_epochs = 20
+num_epochs = 40
 batch_size =  8
 lr_rate, lr_b1, lr_b2 = 0.0003, 0.5, 0.99
 cfg_file =  "/content/ROV_GAN/configs/train_euvp.yaml"
